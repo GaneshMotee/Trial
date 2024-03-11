@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin Report</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Add these script tags in the head section -->
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
+    <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 400px;
+        }
+
+        .modal-content img {
+            width: 350px;
+            height: 65px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .footer {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer p {
+            margin: 0;
+            cursor: pointer;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .footer p:hover {
+            color: #3498db
+        }
+
+        .custom-navbar {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .report-form {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f5f5f5;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table th, .report-table td {
+            border: 1px solid #062A63;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .report-table th {
+            background-color: #062A63;
+            color: #ecf0f1;
+        }
+        table {
+            width: 60%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+           
+        }
+        th {
+            color: #f2f2f2;
+            background-color: #062A63;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .no-results {
+            font-style: italic;
+            color: #888;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    {% include 'navbarAdmin.html' %}
+    <!-- Your form for filtering data -->
+<div>
+    <form id="filterForm" method="GET" >
+        <label for="partNumber">Part Number</label>
+        <select id="partNumber" name="partNumber">
+            <option value="">Select Part Number</option>
+            {% for part_number in part_numbers %}
+                <option value="{{ part_number.PartNumber }}">{{ part_number.PartNumber }}</option>
+            {% endfor %}
+        </select>
+    
+        <label for="Shift">Shift</label>
+        <select id="Shift" name="Shift">
+            <option value="">Select Shift</option>
+            {% for shift in shifts %}
+                <option value="{{ shift.Shift_name }}">{{ shift.Shift_name }}</option>
+            {% endfor %}
+        </select>
+    
+        <label for="dateFrom">Date From</label>
+        <input type="date" name="dateFrom">
+    
+        <label for="dateTo">Date To</label>
+        <input type="date" name="dateTo">
+    
+        <button type="submit">Generate Report</button>
+        <!-- Add these buttons inside the .report-form div -->
+        <!-- <button onclick="exportToPDF()">Export to PDF</button> -->
+        <button onclick="exportToExcel()">Export to Excel</button>
+
+    </form>
+</div>
+    <!-- Display area for results -->
+    <div class="table-container" id="resultsContainer">
+        <table>
+            <!-- Table headers -->
+            <thead>
+                <tr>
+                    <th>Part Number</th>
+                    <th>Highest Values</th>
+                    <th>Filter No</th>
+                    <th>Result</th>
+                    <th>Shift</th>
+                    <th>Date</th>
+
+
+                    <!-- Add more headers as needed -->
+                </tr>
+            </thead>
+            <tbody id="resultsTableBody">
+                {% if results %}
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.PartNumber }}</td>
+                        <td>{{ result.Highest_value }}</td>
+                        <td>{{ result.FilterNo }}</td>
+                        <td>{{ result.result }}</td>
+                        <td>{{ result.Shift }}</td>
+                        <td>{{ result.Date_Field }}</td>
+                        
+
+                        <!-- Display more fields as needed -->
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="no-results">No results found</td>
+                </tr>
+            {% endif %}
+                <!-- Data will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <p onclick="document.getElementById('contactModal').style.display='block'">Contact</p>
+    </div>
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('contactModal').style.display='none'">×</span>
+            <img src="{% static 'images/mainlogo.jpg' %}" alt="Logo">
+            <br>
+            <p>Sandeep Bhadkamkar</p>
+            <p><i class="fas fa-phone"></i> 9890033285</p>
+            <p><i class="fas fa-globe"></i>  <a href="http://www.automationteknix.com" target="_blank">www.automationteknix.com</a></p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:sandeep@automationteknix.com">sandeep@automationteknix.com</a></p>
+        </div>
+    </div>
+
+    <!-- jQuery script -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#filterButton').on('click', function () {
+                var formData = $('#filterForm').serialize();
+                $.ajax({
+                    type: 'GET',
+                    url: '/admin_report/',
+                    data: formData,
+                    success: function (data) {
+                        $('#resultsTableBody').empty(); // Clear previous results
+                        if (data.length > 0) {
+                            data.forEach(function (result) {
+                                var newRow = "<tr>" +
+                                    "<td>" + result.PartNumber + "</td>" +
+                                    "<td>" + result.FilterNo + "</td>" +
+                                    "<td>" + result.result + "</td>" +
+                                    "<td>" + result.Shift + "</td>" +
+                                    "<td>" + result.highest_value + "</td>" +
+                                    "<td>" + result.Date_Field + "</td>" +
+                                    "</tr>";
+                                $('#resultsTableBody').append(newRow);
+                            });
+                        } else {
+                            $('#resultsTableBody').html('<tr><td colspan="5" class="no-results">No results found</td></tr>');
+                        }
+                        $('#resultsContainer').show(); // Show results container
+                    },
+                    error: function (error) {
+                        console.log('Error fetching data:', error);
+                    }
+                });
+            });
+        });
+
+
+        function exportToExcel() {
+        const reportTable = document.querySelector("table");
+        const excelData = [];
+        const rows = reportTable.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            const rowData = [];
+            const cells = row.querySelectorAll("td");
+            cells.forEach(cell => {
+                rowData.push(cell.textContent);
+            });
+            excelData.push(rowData);
+        });
+
+        const worksheet = XLSX.utils.aoa_to_sheet([["PartNumber", "FilterValues", "FilterNo", "Result", "Shift"], ...excelData]);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
+        XLSX.writeFile(workbook, 'report.xlsx');
+    }
+
+    </script>
+</body>
+
+</html>

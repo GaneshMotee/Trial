@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #062A63;
+            padding: 8px 15px;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .register, .admin-login { /* Separate class for the admin login button */
+            margin-bottom: 20px;
+            
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 7px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding-left: 0px; /* Add padding to the right side */
+            padding-right: 2px;
+        }
+
+        input[type="submit"] {
+            background-color: #062A63;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0355A2;
+        }
+
+        p {
+            color: #000000;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 5px;
+            background-color: #062A63;
+            
+        }
+        .footer p {
+            margin: 0;
+            color: #fff;
+        }
+        .btn-primary { /* Separate class for button styling */
+            background-color: #062A63;
+            color: #fff;
+            text-decoration: none; /* To remove underline for links */
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block; /* To make the link display as a button */
+            margin-right: 20px; /* Adjust margin as needed */
+        }
+    </style>
+</head>
+<body>
+    <h1>Register</h1>
+    <form method="post">
+        <div class="register">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <a href="/admin/login/?next=/admin/" class="btn-primary">Admin Login</a>
+            <input type="submit" value="Register">
+        </div>
+    </form>
+    {% if msg %}
+        <p>{{ msg }}</p>
+    {% endif %}
+    
+    <div class="footer">
+        <p>Contact</p>
+    </div>
+</body>
+</html>

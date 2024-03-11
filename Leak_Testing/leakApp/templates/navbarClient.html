@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  
+    <title>Client page</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm custom-navbar navbar-dark">
+        <a class="navbar-brand" href="#">Welcome Admin</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+
+            <li class="nav-item" id="master">
+              <a class="nav-link"href="{% url 'client_master' %}">Master</a>
+
+            </li>
+            <li class="nav-item" id="test">
+              <a class="nav-link" href="{% url 'client_test' %}">Test</a>
+            </li>
+            <li class="nav-item" id="report">
+              <a class="nav-link" href="{% url 'client_report' %}">Report</a>
+            </li>
+            <li class="nav-item" id="shift">
+              <a class="nav-link" href="{% url 'client_shift' %}">Shift</a>
+            </li>
+            <li class="nav-item" id="manual">
+              <a class="nav-link" href="{% url 'client_manual' %}">Manual</a>
+            </li>
+            
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'register' %}">Register</a>
+            <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'logout' %}" style="margin-left: 15px;">Logout</a>
+        </form>
+          
+        </div>
+      </nav>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the current URL path
+            var currentUrl = window.location.pathname;
+    
+            // Define the mapping between URL paths and menu IDs
+            var menuMapping = {
+                '/client/master/': 'master',
+                '/client/test/': 'test',
+                '/client/shift/': 'shift',
+                '/client/report/': 'report',
+                '/client/manual/': 'manual'
+                // Add mappings for other menu items
+            };
+    
+            // Find the corresponding menu item and mark it as active
+            var menuItemId = menuMapping[currentUrl];
+            if (menuItemId) {
+                var menuItem = document.getElementById(menuItemId);
+                if (menuItem) {
+                    menuItem.classList.add('active');
+                }
+            }
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Page</title>
+    <meta name="description" content="Admin Page Description">
+    {% load static %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    <style>
+        /* Reset some default styles */
+        body, h1, p, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-navbar {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .custom-navbar ul {
+            list-style: none;
+        }
+
+        .custom-navbar ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin: 10px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 400px;
+        }
+
+        .modal-content img {
+            width: 350px;
+            height: 65px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .footer {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer p {
+            margin: 0;
+            cursor: pointer;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .footer p:hover {
+            color: #3498db
+        }
+        .action-buttons {
+            display: flex;
+        }
+
+        .action-buttons button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .action-buttons button.edit {
+            background-color: #062A63;
+            color: #fff;
+        }
+
+        .action-buttons button.edit:hover {
+            background-color: #2980b9;
+        }
+
+        .action-buttons button.delete {
+            background-color: #062A63;
+            color: #fff;
+        }
+
+        .action-buttons button.delete:hover {
+            background-color: #2980b9;
+        }
+
+        #form-div {
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #form-div h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'navbarAdmin.html' %}
+    <div class="content">
+        <form method="post" class="form-group">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="action-buttons">
+                <button type="submit" class="edit">Save</button>
+                <button type="reset" class="delete">Cancel</button>
+            </div>
+        </form>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Part Number</th>
+                    <!-- <th>MultiFactor</th> -->
+                    <th>Greater/Less</th>
+                    <th>Setpoint</th>
+                    <th>Value</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                    <tr>
+                        <td>{{ item.PartNumber }}</td>
+                        <!-- <td>{{ item.MultiFactor }}</td> -->
+                        <td>{{ item.GreaterLess }}</td>
+                        <td>{{ item.Setpoint }}</td>
+                        <td>{{ item.Value }}</td>
+                        <td>
+                            <a href="{% url 'edit_record' item.pk %}">Edit</a> | 
+                            <a href="{% url 'delete_record' item.pk %}">Delete</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6">No data available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    
+    </div>
+    <div class="footer">
+        <p onclick="document.getElementById('contactModal').style.display='block'">Contact</p>
+    </div>
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('contactModal').style.display='none'">×</span>
+            <img src="{% static 'images/mainlogo.jpg' %}" alt="Logo">
+            <br>
+            <p>Sandeep Bhadkamkar</p>
+            <p><i class="fas fa-phone"></i> 9890033285</p>
+            <p><i class="fas fa-globe"></i>  <a href="http://www.automationteknix.com" target="_blank">www.automationteknix.com</a></p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:sandeep@automationteknix.com">sandeep@automationteknix.com</a></p>
+        </div>
+    </div>
+    
+</body>
+
+
+</html>

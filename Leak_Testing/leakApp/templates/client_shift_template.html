@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Your head content here -->
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
+    <style>
+        /* Your CSS styles go here */
+        /* Include your CSS styles here */
+
+        /* Reset some default styles */
+        body, h1, p, ul {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-navbar {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .custom-navbar ul {
+            list-style: none;
+        }
+
+        .custom-navbar ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin: 10px 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th, .data-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 400px;
+        }
+
+        .modal-content img {
+            width: 350px;
+            height: 65px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .footer {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer p {
+            margin: 0;
+            cursor: pointer;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .footer p:hover {
+            color: #3498db
+        }
+
+
+        .action-buttons {
+            display: flex;
+        }
+
+        .action-buttons button {
+            margin: 0 5px;
+            padding: 10px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .action-buttons button.edit {
+            background-color: #062A63;
+            color: #fff;
+            
+        }
+
+        .action-buttons button.edit:hover {
+            background-color: #2980b9;
+        }
+
+        .action-buttons button.delete {
+            background-color: #062A63;
+            color: #fff;
+        }
+
+        .action-buttons button.delete:hover {
+            background-color: #2980b9;
+        }
+
+        #form-div {
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #form-div h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+        .Container{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        form button[type="submit"] {
+        background-color: #062A63;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 10px 20px;
+    }
+
+    form button[type="reset"] {
+        background-color: #062A63; /* Red color */
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        padding: 10px 20px;
+    }
+
+    /* Add space between the "Edit" and "Delete" buttons */
+    .action-buttons form {
+        margin-right: 10px;
+    }
+    </style>
+</head>
+<body>
+    {% include 'navbarClient.html' %}
+    <div class="content">
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.Shift_name.id_for_label }}">Shift Name:</label>
+                {{ form.Shift_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.Shift_From.id_for_label }}">Shift From:</label>
+                {{ form.Shift_From }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.Shift_To.id_for_label }}">Shift To:</label>
+                {{ form.Shift_To }}
+            </div>
+            <button type="submit">Save</button>
+            {% if form.errors %}
+                <div class="error">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+            <button type="reset" class="delete">Cancel</button>
+        </form>
+
+        <table class="data-table">
+            <tr>
+                <th>Shift Name</th>
+                <th>Shift From</th>
+                <th>Shift To</th>
+                <th>Actions</th>
+            </tr>
+            {% for shift in shifts %}
+                <tr>
+                    <td>{{ shift.Shift_name }}</td>
+                    <td>{{ shift.Shift_From }}</td>
+                    <td>{{ shift.Shift_To }}</td>
+                    <td class="action-buttons">
+                        <form method="post" action="{% url 'edit_shift' shift.id %}">
+                            {% csrf_token %}
+                            <a href="{% url 'edit_shift' shift.id %}">Edit</a>
+                        </form>
+                        
+                        <form method="post" action="{% url 'delete_shift' shift.id %}" class="Container">
+                            {% csrf_token %}
+                            <a href="{% url 'delete_shift' shift.id %}">Delete</a>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="footer">
+        <p onclick="document.getElementById('contactModal').style.display='block'">Contact</p>
+    </div>
+
+    
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('contactModal').style.display='none'">×</span>
+            <img src="{% static 'images/mainlogo.jpg' %}" alt="Logo">
+            <br>
+            <p>Sandeep Bhadkamkar</p>
+            <p><i class="fas fa-phone"></i> 9890033285</p>
+            <p><i class="fas fa-globe"></i>  <a href="http://www.automationteknix.com" target="_blank">www.automationteknix.com</a></p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:sandeep@automationteknix.com">sandeep@automationteknix.com</a></p>
+        </div>
+    </div>
+    
+</body>
+</html>

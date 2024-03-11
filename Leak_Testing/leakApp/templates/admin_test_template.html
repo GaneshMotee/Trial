@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .custom-navbar {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .select-partnumber {
+            margin: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select-partnumber label {
+            display: block;
+            font-weight: bold;
+            margin-right: 40px;
+        }
+
+        .select-partnumber select {
+            width: 15%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .button-container {
+            display: flex;
+            margin-left: 30px;
+        }
+        #start-button {
+            background-color: green;
+        }
+
+        #stop-button {
+            background-color: #ff0000;
+            margin-left: 10px;
+        }
+
+        .button {
+            background-color: #062A63;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #2980b9;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer p {
+            margin: 0;
+            cursor: pointer;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .footer p:hover {
+            color: #3498db
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            max-width: 400px;
+        }
+
+        .modal-content img {
+            width: 350px;
+            height: 65px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        .live-clock {
+            font-size: 18px;
+            margin: 20px;
+            margin-left: 500px;
+        }
+
+        .filter-table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+
+        .filter-table td {
+            padding: 5px;
+        }
+
+        .filter-table td label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        .filter-table input {
+            width: 140px;
+            padding: 5px;
+        }
+
+        .content {
+            text-align: center;
+            margin: 20px;
+        }
+        .table-container {
+            display: flex;
+            justify-content: space-between; /* Create space between tables */
+            padding: 20px; /* Adjust spacing as needed */
+        }
+
+        table {
+            width: calc(50% - 20px); /* Adjust width for two tables with space between */
+            border-collapse: collapse;
+            table-layout: fixed; /* Ensure fixed width */
+            margin-right: 20px; /* Create space between tables */
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            white-space: nowrap; /* Avoid text wrapping */
+            overflow: hidden; /* Hide any overflow */
+            text-overflow: ellipsis;/* Display ellipsis for overflow text */
+        }
+
+        th {
+            background-color: #062A63;
+            color: #ddd;
+        }
+
+        .result-cell {
+            text-align: center;
+        }
+
+        .ok-icon, .nok-icon {
+            font-size: 18px;
+            margin: auto;
+        }
+
+        .ok-icon {
+            color: green; /* Color for OK */
+        }
+
+        .nok-icon {
+            color: red; /* Color for NOK */
+        }
+        .select-new-filter {
+            margin: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select-new-filter label {
+            display: block;
+            font-weight: bold;
+            margin: 50px;
+
+        }
+
+        .select-new-filter select {
+            width: 9%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-left: 700px;
+        }
+    </style>
+</head>
+
+<body>
+       <div class="custom-navbar">
+             {% include 'navbarAdmin.html' %}
+       </div>
+    <form action="{% url 'admin_test' %}" method="post" id="form">
+        {% csrf_token %} 
+        <div class="select-partnumber">
+            <label for="partNumber">Select Part Number:</label>
+            <select id="partNumber" name="partNumber">
+               <option value="" {% if not selected_part %}selected{% endif %}>Select Part Number</option>
+               {% for part_number in part_numbers %}
+               <option value="{{ part_number }}" {% if part_number == selected_part %}selected{% endif %}>
+                       {{ part_number }}
+                </option>
+               {% endfor %}
+            </select>
+           <div class="button-container"><!-- Added an ID to the form for easier access in JavaScript -->
+                <input type="hidden" name="selected_part" id="selectedPartInput" value="">
+                <button class="button" type="submit" name="action" value="start" id="start-button">Start</button>
+                <button class="button" type="submit" name="action" value="stop" id="stop-button">Stop</button>
+            </div>
+    </form>
+        <div class="live-clock">        
+            <span id="date">DD/MM/YYYY</span>
+            <span id="clock">00:00:00</span>
+        </div>
+    </div>
+    <!-- <div class="select-new-filter">
+        <select id="filterUpdate" name="filterUpdate">
+          <option value="">Select a Part Number</option>
+        </select>
+    </div>
+     -->
+    
+    
+    <p class="selected-part" id="selectedPart"></p> <!-- Display the selected part here -->
+    <div class="message">
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+    </div>
+
+    
+    <form action="{% url 'admin_test' %}" >
+        {% csrf_token %}
+        <div class="table-container">
+            <!-- First Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>FilterNo</th>
+                        <th>Filter_Values</th>
+                        <th>Result</th>
+                        <!-- <th>Highest_value</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Repeat this block for the first 8 filters -->
+                    {% for filter_item in Filter|slice:":8" %}
+                        <tr>
+                            <td>Filter {{ filter_item.FilterNo }}:</td>
+                            <td id="filter-value-{{ filter_item.FilterNo }}" class="filter-value-cell">{{ filter_item.Filter_Values }}</td>
+                            <td id="result-{{ filter_item.FilterNo }}" class="result-cell">
+                                <i id="icon-{{ filter_item.FilterNo }}" class="fas"></i>
+                            </td>
+                            <!-- <td>{{ filter_item.Highest_value }}</td> -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <!-- Second Table -->
+            <table>
+                <thead>
+                    <tr>
+                        <th>FilterNo</th>
+                        <th>Filter_Values</th>
+                        <th>Result</th>
+                        <!-- <th>Highest_value</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Repeat this block for the next 8 filters -->
+                    {% for filter_item in Filter|slice:"8:" %}
+                        <tr>
+                            <td>Filter {{ filter_item.FilterNo }}:</td>
+                            <td id="filter-value-{{ filter_item.FilterNo }}" class="filter-value-cell">{{ filter_item.Filter_Values }}</td>
+                            <td id="result-{{ filter_item.FilterNo }}" class="result-cell">
+                                <i id="icon-{{ filter_item.FilterNo }}" class="fas"></i>
+                            </td>
+                            <!-- <td>{{ filter_item.Highest_value }}</td> -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+    </div>
+    <div class="footer">
+        <p onclick="document.getElementById('contactModal').style.display='block'">Contact</p>
+    </div>
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('contactModal').style.display='none'">×</span>
+            <img src="{% static 'images/mainlogo.jpg' %}" alt="Logo">
+            <br>
+            <p>Sandeep Bhadkamkar</p>
+            <p><i class="fas fa-phone"></i> 9890033285</p>
+            <p><i class="fas fa-globe"></i>  <a href="http://www.automationteknix.com" target="_blank">www.automationteknix.com</a></p>
+            <p><i class="fas fa-envelope"></i> <a href="mailto:sandeep@automationteknix.com">sandeep@automationteknix.com</a></p>
+        </div>
+    </div>
+    
+    <!-- admin_test_template.html -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+
+        function updateClock() {
+        const clock = document.getElementById("clock");
+        const date = document.getElementById("date");
+        const now = new Date();
+
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        clock.textContent = `${hours}:${minutes}:${seconds}`; 
+
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        date.textContent = `${day}/${month}/${year}`;
+
+    }
+
+    setInterval(updateClock, 1000); // Update the clock every second
+    updateClock(); // Initial call to display the time immediately
+
+    
+    document.addEventListener('DOMContentLoaded', function () {
+    const partNumberSelect = document.getElementById('partNumber');
+    const selectedPartInput = document.getElementById('selectedPartInput');
+    const selectedPartDisplay = document.getElementById('selectedPart');
+    const startButton = document.getElementById('start-button');
+
+        // Set the initial selected part from the server
+    const initialSelectedPart = "{{ selected_part }}";
+    if (initialSelectedPart) {
+        selectedPartInput.value = initialSelectedPart;
+        selectedPartDisplay.textContent = `Selected Part: ${initialSelectedPart}`;
+        startButton.disabled = true;
+        moveOptionToTop(partNumberSelect, initialSelectedPart);
+    }
+
+      // Event listener for part selection
+partNumberSelect.addEventListener('change', function () {
+    const newSelectedPart = partNumberSelect.value;
+    selectedPartInput.value = newSelectedPart;
+    selectedPartDisplay.textContent = `Selected Part: ${newSelectedPart}`;
+    startButton.disabled = false;
+    moveOptionToTop(partNumberSelect, newSelectedPart);
+});
+});
+
+    function moveOptionToTop(select, value) {
+        const options = select.options;
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === value) {
+                // Remove the existing option
+                select.remove(i);
+                // Insert the option at the top
+                const newOption = new Option(value, value);
+                select.add(newOption, 0);
+                // Select the newly added option
+                newOption.selected = true;
+                break;
+            }
+        }
+    }
+
+// Function to update the result in the database
+function updateResultInDatabase(batchCounter, result) {
+    $.ajax({
+        method: 'POST',
+        url: '/update_result/',
+        data: {
+            'BatchCounter': batchCounter,
+            'result': result,
+        },
+        success: function(response) {
+            console.log('Result updated successfully:', response.message);
+        },
+        error: function(error) {
+            console.log('Error updating result:', error);
+        }
+    });
+}
+
+// Function to update result in the database based on specific BatchCounter and result value
+function updateResult(batchCounter, result) {
+    updateResultInDatabase(batchCounter, result);
+}
+
+// Example usage - Call this function whenever needed in your frontend code
+const batchCounter = '123'; // Replace with the actual BatchCounter value
+const result = 'NOK'; // Replace with the actual result value (e.g., determined from the frontend logic)
+updateResult(batchCounter, result);
+// Call this function whenever you have the appropriate BatchCounter and result value
+// For example, you might call it on a button click or some other event in your frontend    
+
+
+
+function getSetpointValue() {
+    $.ajax({
+        method: 'GET',
+        url: '/get_setpoint/',  // Replace with your actual endpoint URL
+        success: function(response) {
+            const setpoint = response.setpoint;
+            updateFilterValues(setpoint);
+        },
+        error: function(error) {
+            console.log('Error getting setpoint value:', error);
+        }
+    });
+}
+
+function updateFilterValues(setpoint) {
+    $.ajax({
+        method: 'GET',
+        url: '/ShowDetails/',
+        success: function(data) {
+            // Update the filter values on the screen
+            for (const filterNo in data) {
+                const filterValue = data[filterNo];
+                $(`#filter-value-${filterNo}`).text(filterValue);
+
+                // Update the result based on filter value (>setpoint)
+                const result = filterValue > setpoint ? 'NOK' : 'OK';
+                const iconElement = $(`#icon-${filterNo}`);
+
+                if (result === 'OK') {
+                    iconElement.addClass('fa-check-circle ok-icon');
+                    iconElement.removeClass('fa-times-circle nok-icon');
+                } else {
+                    iconElement.addClass('fa-times-circle nok-icon');
+                    iconElement.removeClass('fa-check-circle ok-icon');
+                }
+            }
+        },
+        error: function(error) {
+            console.log('Error updating filter values:', error);
+        }
+    });
+}
+
+// Get the setpoint value initially when the document is ready
+$(document).ready(function() {
+    getSetpointValue();
+});
+
+// Update the filter value every 5 seconds (adjust the interval as needed)
+setInterval(function() {
+    getSetpointValue();
+}, 5000); // 5 seconds
+// function fetchLast5NOKFilters() {
+//     $.ajax({
+//         method: 'GET',
+//         url: '/get_last_5_nok_filters/', // URL mapped to your Django view
+//         success: function(data) {
+//             // Update the dropdown with the fetched data
+//             updateFilterDropdown(data);
+//         },
+//         error: function(error) {
+//             console.log('Error fetching last 5 NOK filters:', error);
+//         }
+//     });
+// }
+
+// // Function to update the new dropdown with the last 5 NOK filters
+// function updateFilterDropdown(data) {
+//     const filterDropdown = document.getElementById('filterUpdate');
+//     filterDropdown.innerHTML = ''; // Clear previous options
+
+//     // Iterate through the fetched data to populate the dropdown
+//     for (const filterNo in data) {
+//         const filterValue = data[filterNo].Filter_Values;
+//         const filterResult = data[filterNo].Result === 'NOK' ? 'NOK' : 'NOK'; // Display 'NOK' or 'OK';
+//         const filterDateTime = data[filterNo].time_field; // Replace 'time_field' with your actual datetime field name
+
+// // Parse the date string and create a Date object
+//         const parsedDateTime = Date.parse(filterDateTime);
+//         const formattedDateTime = new Date(parsedDateTime).toLocaleString(); // Format the date as needed
+//         const option = document.createElement('option');
+//         option.value = filterNo;
+//         option.textContent = `Filter ${filterNo} - Value: ${filterValue} - Result: ${filterResult} - DateTime: ${formattedDateTime}`;
+//         filterDropdown.appendChild(option);
+//     }
+// }
+
+// // Fetch and update the dropdown every 1 seconds (or as needed)
+// setInterval(fetchLast5NOKFilters, 1000); // Fetch every 10 seconds
+
+// // Initial update of the dropdown
+// fetchLast5NOKFilters();
+
+</script>
+
+</body>
+</html>

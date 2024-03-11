@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Highest Values</title>
+</head>
+<body>
+    <h1>Highest Values</h1>
+
+    {% for batch_counter, highest_value_row in highest_values.items %}
+        <h3>Batch Counter: {{ batch_counter }}</h3>
+        <ul>
+            <li>Batch Counter: {{ highest_value_row.0 }}</li>
+            <li>Part Number: {{ highest_value_row.1 }}</li>
+            <li>Filter Values: {{ highest_value_row.2 }}</li>
+            <li>Filter No: {{ highest_value_row.3 }}</li>
+            <li>Result: {{ highest_value_row.4 }}</li>
+            <li>Shift: {{ highest_value_row.5 }}</li>
+            <li>Date Field: {{ highest_value_row.6 }}</li>
+        </ul>
+    {% endfor %}
+</body>
+</html>

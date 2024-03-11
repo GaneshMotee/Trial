@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin Test Page</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .footer {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 5px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .custom-navbar {
+            background-color: #062A63;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .content {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+        }
+
+        .button {
+            background-color: #062A63;
+            color: #ecf0f1;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        .select-partnumber {
+            display: flex;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .select-partnumber label {
+            margin-right: 20px;
+        }
+
+        .select-partnumber select {
+            width: 200px; /* Adjust the width as needed */
+        }
+
+        .live-clock {
+            font-size: 24px;
+            margin: 20px;
+            /* margin-right: 50px; */
+            margin-left: 480px;
+        }
+
+
+       
+    .filter-table {
+        width: 50%;
+        border-collapse: collapse;
+        
+    }
+
+    .filter-table td {
+        padding: 5px; 
+    }
+
+    .filter-table td label {
+        display: inline-block;
+        width: 100px; 
+    }
+
+    .filter-table input {
+        width: 140px;
+        padding: 5px; 
+    }  
+
+
+
+
+    </style>
+</head>
+
+<body>
+    {% include 'navbarAdmin.html' %}
+
+    <div class="content">
+        <div class="select-partnumber">
+            <label for="partNumber">Select Part Number:</label>
+            <select id="partNumber" name="partNumber">
+                <option value="part1">Part 1</option>
+                <option value="part2">Part 2</option>
+                <option value="part3">Part 3</option>
+            </select>
+            <div class="buttons">
+                <button class="button" id="startButton">Start</button>
+                <button class="button" id="stopButton">Stop</button>
+            </div>
+        
+        <div class="live-clock">
+            
+            <span id="date">DD/MM/YYYY</span>
+            <span id="clock">00:00:00</span>
+        </div>
+        </div>
+
+
+        <table class="filter-table">
+            <tr>
+                <td>Filter 1:</td>
+                <td><input type="text" id="filter1" placeholder="Value for Filter 1"></td>
+                <td>&nbsp;</td>
+                <td>Filter 9:</td>
+                <td><input type="text" id="filter9" placeholder="Value for Filter 9"></td>
+            </tr>
+            
+            <tr>
+                <td>Filter 2:</td>
+                <td><input type="text" id="filter2" placeholder="Value for Filter 2"></td>
+                <td>&nbsp;</td>
+                <td>Filter 10:</td>
+                <td><input type="text" id="filter10" placeholder="Value for Filter 10"></td>
+            </tr>
+            <tr>
+                <td>Filter 3:</td>
+                <td><input type="text" id="filter3" placeholder="Value for Filter 3"></td>
+                <td>&nbsp;</td>
+                <td>Filter 11:</td>
+                <td><input type="text" id="filter11" placeholder="Value for Filter 11"></td>
+            </tr>
+            <tr>
+                <td>Filter 4:</td>
+                <td><input type="text" id="filter4" placeholder="Value for Filter 4"></td>
+                <td>&nbsp;</td>
+                <td>Filter 12:</td>
+                <td><input type="text" id="filter12" placeholder="Value for Filter 12"></td>
+            </tr>
+            <tr>
+                <td>Filter 5:</td>
+                <td><input type="text" id="filter5" placeholder="Value for Filter 5"></td>
+                <td>&nbsp;</td>
+                <td>Filter 13:</td>
+                <td><input type="text" id="filter13" placeholder="Value for Filter 13"></td>
+            </tr>
+            <tr>
+                <td>Filter 6:</td>
+                <td><input type="text" id="filter6" placeholder="Value for Filter 6"></td>
+                <td>&nbsp;</td>
+                <td>Filter 14:</td>
+                <td><input type="text" id="filter14" placeholder="Value for Filter 14"></td>
+            </tr>
+            <tr>
+                <td>Filter 7:</td>
+                <td><input type="text" id="filter7" placeholder="Value for Filter 7"></td>
+                <td>&nbsp;</td>
+                <td>Filter 15:</td>
+                <td><input type="text" id="filter15" placeholder="Value for Filter 15"></td>
+            </tr>
+            <tr>
+                <td>Filter 8:</td>
+                <td><input type="text" id="filter8" placeholder="Value for Filter 8"></td>
+                <td>&nbsp;</td>
+                <td>Filter 16:</td>
+                <td><input type="text" id="filter16" placeholder="Value for Filter 16"></td>
+            </tr>
+        </table>
+        
+    </div>
+
+
+    <div class="footer">
+        <p>Contact</p><!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ... Your other CSS styles ... */
+
+        .filter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .filter-table td {
+            padding: 10px;
+        }
+
+        .filter-table td input {
+            width: 100%; /* Adjust the width as needed */
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .filter-table td label {
+            display: block;
+            font-weight: bold;
+        }
+
+        /* Add additional styles as needed */
+
+    </style>
+</head>
+<body>
+    <!-- ... Your existing HTML code ... -->
+
+    <table class="filter-table">
+        <tr>
+            <td>
+                <label for="filter1">Filter 1:</label>
+                <input type="text" id="filter1" placeholder="Value for Filter 1">
+            </td>
+            <td>&nbsp;</td>
+            <td>
+                <label for="filter9">Filter 9:</label>
+                <input type="text" id="filter9" placeholder="Value for Filter 9">
+            </td>
+        </tr>
+
+        <!-- Repeat similar structure for other rows -->
+
+    </table>
+
+    <!-- ... The rest of your HTML and scripts ... -->
+</body>
+</html>
+
+    </div>
+
+    <script>
+        let timerInterval;
+        const startButton = document.getElementById("startButton");
+        const stopButton = document.getElementById("stopButton");
+        const clockElement = document.getElementById("clock");
+
+        startButton.addEventListener("click", () => {
+            if (!timerInterval) {
+                updateClock();
+                timerInterval = setInterval(updateClock, 1000);
+            }
+        });
+
+        stopButton.addEventListener("click", () => {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        });
+
+        function updateClock() {
+        const clock = document.getElementById("clock");
+        const date = document.getElementById("date");
+        const now = new Date();
+
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        clock.textContent = `${hours}:${minutes}:${seconds}`;
+
+        const year = now.getFullYear();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        date.textContent = `${day}/${month}/${year}`;
+
+    }
+
+    setInterval(updateClock, 1000); // Update the clock every second
+    updateClock(); // Initial call to display the time immediately
+
+    </script>
+</body>
+</html>

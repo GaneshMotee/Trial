@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Live Updates</title>
+</head>
+<style>.message .filter-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.message .filter-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.message .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.message .filter-item {
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.message .filter-item label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+</style>
+<body>
+
+<h1>Live Filter Value Updates</h1>
+
+<form action="{% url 'admin_test' %}">
+    {% csrf_token %}
+    <div class="message">
+        <div class="filter-container">
+            <div class="filter-section">
+                <div class="filter-row">
+                    {% for filter_item in Filter %}
+                        {% if filter_item.FilterNo <= 8 %}
+                            <div class="filter-item">
+                                <label for="filter{{ filter_item.FilterNo }}">Filter {{ filter_item.FilterNo }}:</label>
+                                <input type="text" id="filter{{ filter_item.FilterNo }}" placeholder="Value for Filter {{ filter_item.FilterNo }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="filter-row">
+                    {% for filter_item in Filter %}
+                        {% if filter_item.FilterNo > 8 %}
+                            <div class="filter-item">
+                                <label for="filter{{ filter_item.FilterNo }}">Filter {{ filter_item.FilterNo }}:</label>
+                                <input type="text" id="filter{{ filter_item.FilterNo }}" placeholder="Value for Filter {{ filter_item.FilterNo }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function updateFilterValue() {
+        $.ajax({
+            method: "GET",
+            url: "/ShowDetails/",
+            success: function(data) {
+                // Update the filter value cell in the table
+                $(".filter-value-cell").text(data.new_filter_value);
+            },
+            error: function(error) {
+                console.log("Error updating filter value:", error);
+            }
+        });
+    }
+
+    // Update the filter value every 5 seconds
+    setInterval(updateFilterValue, 100);
+
+    // Initial update
+    updateFilterValue();
+</script>
+
+</body>
+</html>
